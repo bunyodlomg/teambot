@@ -22,6 +22,8 @@ const forUser = async (ctx, text, user) => {
             })
             back = ''
             break;
+
+            // TODAY START
         case btn.home.today:
             check_input = {};
             await ctx.reply(`Kerakli bo'limni tanlang 👇`, {
@@ -56,6 +58,10 @@ const forUser = async (ctx, text, user) => {
             usersQueue(ctx)
             back = 'today'
             break;
+        // TODAY END
+
+            
+
         case 'Ortga qaytish 🔙':
             check_input = {};
             backUser(ctx, user, back)
