@@ -1,3 +1,4 @@
+const { feedback } = require("../../user/feedback/feedback")
 
 module.exports = {
     home: {
@@ -5,7 +6,7 @@ module.exports = {
         vazifalar: 'Mening vazifalarim 📝',
         sarf_harajat: 'Sarf harajatlar 📈',
         nizom: 'Ichki nizomlar 📋',
-        offer_complaint: 'Taklif💡/ Shikoyat📣',
+        feedback: 'Taklif💡/ Shikoyat📣',
     },
     today: {
         start: 'Ishni boshlash 🚀',

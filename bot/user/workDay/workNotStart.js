@@ -1,6 +1,6 @@
-const { Attendance } = require("../../models/model")
-const { dateFormat } = require("../helper/dateFormat")
-const kb = require('../keyboard/user_keyboard/keyboard');
+const { Attendance } = require("../../../models/model")
+const { dateFormat } = require("../../helper/dateFormat")
+const kb = require('../../keyboard/user_keyboard/keyboard');
 
 const workNotStart = async (ctx, id) => {
     console.log(ctx.message.text);

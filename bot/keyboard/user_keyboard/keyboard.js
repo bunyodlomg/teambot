@@ -7,7 +7,7 @@ module.exports = {
         [btn.home.vazifalar],
         [btn.home.sarf_harajat],
         [btn.home.nizom],
-        [btn.home.offer_complaint],
+        [btn.home.feedback],
     ],
     // /home/today
     today: [

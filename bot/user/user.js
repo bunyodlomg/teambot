@@ -1,11 +1,13 @@
 const btn = require("../keyboard/user_keyboard/buttons");
 const kb = require('../keyboard/user_keyboard/keyboard');
-const { workStart } = require("./workStart");
-const { workEnd } = require("./workEnd");
+const { workStart } = require("./workDay/workStart");
+const { workEnd } = require("./workDay/workEnd");
 const { backUser } = require("./back");
 const { workDescription } = require("./workDescription");
 const { reason } = require("../helper/reason");
-const { usersQueue } = require("./usersQueue");
+const { usersQueue } = require("./workDay/usersQueue");
+const { feedback } = require("./feedback/feedback");
+const keyboard = require("../keyboard/user_keyboard/keyboard");
 
 let back = '',
     check_input = {};
@@ -23,7 +25,7 @@ const forUser = async (ctx, text, user) => {
             back = ''
             break;
 
-            // TODAY START
+        // TODAY START
         case btn.home.today:
             check_input = {};
             await ctx.reply(`Kerakli bo'limni tanlang 👇`, {
@@ -60,7 +62,21 @@ const forUser = async (ctx, text, user) => {
             break;
         // TODAY END
 
-            
+
+        // FEEDBACK START
+        case btn.home.feedback:
+            await ctx.reply(`Taklif yoki shikoyatingizni yozib qoldirishingiz mumkun 📝`, {
+                reply_markup: {
+                    keyboard: kb.home,
+                    one_time_keyboard: true,
+                    input_field_placeholder: "Taklif yoki shikoyatingizni kiriting..."
+
+                }
+            })
+            check_input = { type: 'feedback', value: ctx.msgId, text: ctx.message.text }
+            back = ''
+            break;
+        // FEEDBACK END
 
         case 'Ortga qaytish 🔙':
             check_input = {};

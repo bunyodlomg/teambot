@@ -1,6 +1,6 @@
-const { Attendance } = require("../../models/model")
-const { dateFormat } = require("../helper/dateFormat")
-const kb = require('../keyboard/user_keyboard/keyboard');
+const { Attendance } = require("../../../models/model")
+const { dateFormat } = require("../../helper/dateFormat")
+const kb = require('../../keyboard/user_keyboard/keyboard');
 
 const workLate = async (ctx, id) => {
     const checkUser = await Attendance.findOne({ user_id: id }).sort({ 'created_date': -1 }).lean()

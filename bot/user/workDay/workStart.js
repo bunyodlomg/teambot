@@ -1,6 +1,6 @@
-const { Attendance } = require("../../models/model")
-const { dateFormat, hoursFormat, minutesFormat } = require("../helper/dateFormat")
-const kb = require('../keyboard/user_keyboard/keyboard');
+const { Attendance } = require("../../../models/model")
+const { dateFormat, hoursFormat, minutesFormat } = require("../../helper/dateFormat")
+const kb = require('../../keyboard/user_keyboard/keyboard');
 
 
 const workStart = async (ctx, user, id) => {

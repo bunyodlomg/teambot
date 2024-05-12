@@ -16,6 +16,7 @@ const reason = async (ctx, id) => {
         await ctx.reply(`Iltimos sababini yozing ✍️`, {
             reply_markup: {
                 keyboard: kb.home,
+                input_field_placeholder: 'Iltimos sababini yozing ✍️'
             }
         })
     }

@@ -1,6 +1,6 @@
-const { User, Queue } = require("../../models/model");
+const { User, Queue } = require("../../../models/model");
 const { isSunday } = require("date-fns");
-const { dateFormat } = require("../helper/dateFormat");
+const { dateFormat } = require("../../helper/dateFormat");
 
 
 const usersQueue = async (ctx) => {
