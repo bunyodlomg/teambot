@@ -15,7 +15,7 @@ module.exports = {
         [btn.today.late],
         [btn.today.not_start],
         [btn.today.queue],
-        ['Ortga qaytish 🔙']
+        [btn.back]
     ],
     nizom: [
         [{ text: 'Tanishdim ✅', callback_data: 'accept' }]

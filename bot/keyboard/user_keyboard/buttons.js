@@ -1,5 +1,3 @@
-const { feedback } = require("../../user/feedback/feedback")
-
 module.exports = {
     home: {
         today: 'Bugungi ish kunim 🗓️',
@@ -18,5 +16,6 @@ module.exports = {
             return this
         },
     },
+    back: 'Ortga qaytish 🔙'
 
 }

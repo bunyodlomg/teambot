@@ -1,6 +1,6 @@
 const { Attendance } = require("../../models/model")
 const kb = require("../keyboard/user_keyboard/keyboard")
-const { dateFormat } = require('./dateFormat')
+const { dateFormat } = require('../helper/dateFormat')
 const reason = async (ctx, id) => {
     const checkUser = await Attendance.findOne({ user_id: id }).sort({ 'created_date': -1 }).lean()
     if (checkUser) {

@@ -4,12 +4,12 @@ module.exports = {
     // /home
     home: [
         [btn.home.workers, btn.home.today],
-        // [],
-        // [btn.home.vazifalar],
+        [btn.home.tasks],
         // [btn.home.sarf_harajat],
         // [btn.home.nizom],
         // [btn.home.offer_complaint],
     ],
+    tasks: [btn.tasks.send],
     // today: [
     //     [btn.today.start, btn.today.end],
     //     [btn.today.late],

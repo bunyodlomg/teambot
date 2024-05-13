@@ -1,13 +1,13 @@
+const { bot } = require('../bot');
 const btn = require("../keyboard/user_keyboard/buttons");
 const kb = require('../keyboard/user_keyboard/keyboard');
 const { workStart } = require("./workDay/workStart");
 const { workEnd } = require("./workDay/workEnd");
 const { backUser } = require("./back");
 const { workDescription } = require("./workDescription");
-const { reason } = require("../helper/reason");
+const { reason } = require("./reason");
 const { usersQueue } = require("./workDay/usersQueue");
 const { feedback } = require("./feedback/feedback");
-const keyboard = require("../keyboard/user_keyboard/keyboard");
 
 let back = '',
     check_input = {};
@@ -33,7 +33,7 @@ const forUser = async (ctx, text, user) => {
                     keyboard: kb.today
                 }
             })
-            back = 'home'
+            back = ''
             break;
         case btn.today.start:
             check_input = {};
@@ -56,12 +56,10 @@ const forUser = async (ctx, text, user) => {
             back = 'today'
             break;
         case btn.today.queue:
-            check_input = {};
             usersQueue(ctx)
             back = 'today'
             break;
         // TODAY END
-
 
         // FEEDBACK START
         case btn.home.feedback:
@@ -78,7 +76,8 @@ const forUser = async (ctx, text, user) => {
             break;
         // FEEDBACK END
 
-        case 'Ortga qaytish 🔙':
+        case btn.back:
+            console.log('back clicked');
             check_input = {};
             backUser(ctx, user, back)
             break;
@@ -88,6 +87,7 @@ const forUser = async (ctx, text, user) => {
             }
             break;
     }
+
 }
 
 module.exports = { forUser }
