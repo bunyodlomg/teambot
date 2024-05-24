@@ -4,9 +4,9 @@ module.exports = {
     // /home
     home: [
         [btn.home.today],
-        [btn.home.vazifalar],
-        [btn.home.sarf_harajat],
-        [btn.home.nizom],
+        [btn.home.tasks],
+        [btn.home.finance],
+        [btn.home.rules],
         [btn.home.feedback],
     ],
     // /home/today
@@ -15,6 +15,11 @@ module.exports = {
         [btn.today.late],
         [btn.today.not_start],
         [btn.today.queue],
+        [btn.back]
+    ],
+    tasks: [[btn.tasks]],
+    finance: [
+        [btn.finance.ingoing,btn.finance.outgoing],
         [btn.back]
     ],
     nizom: [

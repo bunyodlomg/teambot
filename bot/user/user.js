@@ -1,4 +1,4 @@
-const { bot } = require('../bot');
+const { Finance } = require('../../models/model');
 const btn = require("../keyboard/user_keyboard/buttons");
 const kb = require('../keyboard/user_keyboard/keyboard');
 const { workStart } = require("./workDay/workStart");
@@ -7,13 +7,14 @@ const { backUser } = require("./back");
 const { workDescription } = require("./workDescription");
 const { reason } = require("./reason");
 const { usersQueue } = require("./workDay/usersQueue");
-const { feedback } = require("./feedback/feedback");
+const { sendData } = require('../admin/admin');
+// const { test } = require("./workDay/TEST.JS");
 
 let back = '',
     check_input = {};
 
 const forUser = async (ctx, text, user) => {
-    const id = ctx.from.id
+    const id = user.id
     switch (text) {
         case '/start':
             check_input = {};
@@ -24,6 +25,9 @@ const forUser = async (ctx, text, user) => {
             })
             back = ''
             break;
+        // case 'test':
+        //     test(ctx)
+        //     break;
 
         // TODAY START
         case btn.home.today:
@@ -37,12 +41,12 @@ const forUser = async (ctx, text, user) => {
             break;
         case btn.today.start:
             check_input = {};
-            workStart(ctx, user, id)
+            workStart(ctx, user)
             back = 'today'
             break;
         case btn.today.end:
             check_input = {};
-            workEnd(ctx, id)
+            workEnd(ctx, user)
             back = 'today'
             break;
         case btn.today.late:
@@ -61,6 +65,9 @@ const forUser = async (ctx, text, user) => {
             break;
         // TODAY END
 
+        // RULES START
+        // RULES END
+
         // FEEDBACK START
         case btn.home.feedback:
             await ctx.reply(`Taklif yoki shikoyatingizni yozib qoldirishingiz mumkun 📝`, {
@@ -76,14 +83,84 @@ const forUser = async (ctx, text, user) => {
             break;
         // FEEDBACK END
 
+        case btn.home.tasks:
+            sendData(ctx, 5, 0, false);
+            back = ''
+            break;
+
+        case btn.home.finance:
+            ctx.reply("Kerakli bo'limni tanlang 👇", {
+                reply_markup: {
+                    keyboard: kb.finance,
+                    resize_keyboard: true,
+                }
+            })
+            check_input = 'finance_outgoing';
+            back = ''
+            break;
+
+        case btn.finance.outgoing:
+            ctx.reply("Namuna\n\n<b>13000</b>,<i>Qatiq sotib oldim</i>\n\n<b>Vergul (,) bo'lishis shart</b>", { parse_mode: "HTML" })
+            check_input = 'finance_outgoing'
+            back = ''
+            break;
+
+        case btn.finance.ingoing:
+            ctx.reply("Namuna\n\n<b>500.000</b>,<i>Imtihonim uchun pul oldim</i>\n\n<b>Vergul (,) bo'lishis shart</b>", { parse_mode: "HTML" })
+            check_input = 'finance_ingoing'
+            back = ''
+            break;
+
+        case btn.home.rules:
+            ctx.api.sendMessage(ctx.from.id, "<a href='https://telegra.ph/Nizom-05-16'>ICHKI NIZOMLAR</a>", {
+                reply_markup: {
+                    inline_keyboard: [[{ text: 'Tanishdim ✅', callback_data: 'rules_accept' }]]
+                },
+                parse_mode: "HTML"
+            })
+            break;
+
         case btn.back:
-            console.log('back clicked');
             check_input = {};
             backUser(ctx, user, back)
             break;
         default:
             if (check_input !== '{}' && check_input.value == ctx.msgId - 2) {
-                workDescription(ctx, id, check_input.type, check_input.text)
+                workDescription(ctx, check_input.type, user)
+            } else if (check_input === "finance_outgoing") {
+                const msg = ctx.message.text.split(",");
+                if (msg.length !== 2) {
+                    ctx.reply("Malumot saqlanmadi. Iltimos namunaga amal qilgan holda yozing !!!");
+                    break;
+                }
+                let summa = 0;
+                try {
+                    summa = parseFloat(msg[0]);
+                } catch (error) {
+                    ctx.reply("Malumot saqlanmadi. Iltimos namunaga amal qilgan holda yozing !!!");
+                    break;
+                }
+                const desc = msg[1];
+                const finance = new Finance({ user_id: user.id, created_date: new Date(), summa: summa, description: desc, status: "OUTGOING" });
+                finance.save();
+                ctx.reply("Malumot saqlandi");
+            } else if (check_input === "finance_ingoing") {
+                const msg = ctx.message.text.split(",");
+                if (msg.length !== 2) {
+                    ctx.reply("Malumot saqlanmadi. Iltimos namunaga amal qilgan holda yozing !!!");
+                    break;
+                }
+                let summa = 0;
+                try {
+                    summa = parseFloat(msg[0]);
+                } catch (error) {
+                    ctx.reply("Ma'lumot saqlanmadi. Iltimos namunaga amal qilgan holda yozing !!!");
+                    break;
+                }
+                const desc = msg[1];
+                const finance = new Finance({ user_id: user.id, created_date: new Date(), summa: summa, description: desc, status: "INGOING" });
+                finance.save();
+                ctx.reply("Malumot saqlandi");
             }
             break;
     }

@@ -1,16 +1,16 @@
 const { feedback } = require('./feedback/feedback');
 const { workLate } = require('./workDay/workLate');
 const { workNotStart } = require('./workDay/workNotStart');
-const workDescription = async (ctx, id, type) => {
+const workDescription = async (ctx, type, user) => {
     switch (type) {
         case 'late':
-            workLate(ctx, id)
+            workLate(ctx, user)
             break;
         case 'not_start':
-            workNotStart(ctx, id)
+            workNotStart(ctx, user)
             break;
         case 'feedback':
-            feedback(ctx, id)
+            feedback(ctx, user)
             break;
         default:
             break;

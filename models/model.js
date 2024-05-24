@@ -1,20 +1,18 @@
 const { Schema, model } = require('mongoose');
-const { dateFormat } = require('../bot/helper/dateFormat');
 
-// Define the schema for the users collection
 const userSchema = new Schema({
     id: { type: Number, unique: true, required: true },
     first_name: String,
     last_name: String,
     admin: Boolean,
-    queue: { type: Boolean, default: false }
+    queue: { type: Boolean, default: false },
+    rule: { type: Boolean, default: false }
 });
 const queueSchema = new Schema({
     date: { type: String, required: true },
     skip: { type: Number, required: true }
 });
 
-// Define the schema for the attendances collection
 const attendanceSchema = new Schema({
     user_id: { type: Number, required: true },
     start_date: { type: Date, default: null },
@@ -28,48 +26,38 @@ const attendanceSchema = new Schema({
     accepted: { type: Boolean, default: false },
 });
 
-// Define the schema for the outgoing collection
-const outgoingSchema = new Schema({
+const finance = new Schema({
     user_id: { type: Number, required: true },
     created_date: { type: Date, required: true },
     summa: { type: Number, required: true },
     description: { type: String, required: true },
+    status: { type: String, required: true },
+    accepted: { type: Boolean, default: false },
 });
 
-// Define the schema for the feedback collection
 const feedbackSchema = new Schema({
     feedback: { type: String, required: true },
     created_date: { type: Date, required: true }
 });
-
-// Define the schema for the principles collection
-const principleSchema = new Schema({
-    principle: { type: String, required: true },
-    file_id: String
-});
-
-// Define the schema for the principles_users collection
-const principleUserSchema = new Schema({
+const tasksSchema = new Schema({
+    admin_id: { type: Number },
     user_id: { type: Number, required: true },
-    principle_id: { type: Number, required: true }
+    task: { type: String, required: true },
+    created_date: { type: Date, required: true },
 });
 
-// Define models based on the schemas
 const User = model('User', userSchema);
 const Queue = model('Queue', queueSchema);
 const Attendance = model('Attendance', attendanceSchema);
-const Outgoing = model('Outgoing', outgoingSchema);
+const Finance = model('Finance', finance);
 const Feedback = model('Feedback', feedbackSchema);
-const Principle = model('Principle', principleSchema);
-const PrincipleUser = model('PrincipleUser', principleUserSchema);
+const Tasks = model('Tasks', tasksSchema);
 
-// Export models
 module.exports = {
     User,
     Queue,
     Attendance,
-    Outgoing,
+    Finance,
     Feedback,
-    Principle,
-    PrincipleUser
+    Tasks
 };
