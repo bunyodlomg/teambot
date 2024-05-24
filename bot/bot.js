@@ -8,7 +8,10 @@ const { rules } = require('./user/rules');
 require('dotenv').config()
 const bot = new Bot(process.env.TOKEN)
 
-let usersId = [];
+let usersId = [],
+    userList = []
+list = ``;
+
 
 bot.on('callback_query:data', async ctx => {
     const callbackData = ctx.callbackQuery.data;
@@ -53,15 +56,30 @@ bot.on('callback_query:data', async ctx => {
     } else if (callbackData.startsWith('feedback_left_')) {
         ctx.deleteMessage()
         const skip = parseInt(callbackData.substring((14)));
-        console.log(callbackData.substring((14)));
         viewFeedback(ctx, skip == 0 ? 0 : skip - 1)
     } else if (callbackData === 'send') {
         tasksSend(ctx, usersId)
         ctx.deleteMessage();
     } else if (callbackData === 'rules_accept') {
         rules(ctx)
+    } else if (callbackData.includes('select_')) {
+        const id = callbackData.split('_')[1]
+        const user = await User.findOne({ id })
+        const full_name = user.first_name + user.last_name
+        if (usersId.includes(id)) {
+            usersId.splice(usersId.indexOf(id), 1);
+            userList.splice(userList.indexOf(full_name), 1)
+        } else {
+            usersId.push(id)
+            userList.push(full_name)
+        }
+        userList.map(u => {
+            list += `${u}\n`
+        })
+        await ctx.answerCallbackQuery({ text: list.length ? list : 'Barcha ishchilar belgilangan!', show_alert: true });
+        list = ``;
     }
-    
+
 })
 
 

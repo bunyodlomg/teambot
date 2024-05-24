@@ -20,6 +20,6 @@ const tasksSend = async (ctx, u) => {
         await ctx.api.sendMessage(user, 'Sizga yangi vazifa berildi!\nVazifa : ' + task.task);
     });
     await ctx.reply('Vazifalar foydalanuvchilarga yuborildi!');
-    // const res = await Tasks.findByIdAndDelete(task._id);
+    const res = await Tasks.findByIdAndDelete(task._id);
 }
 module.exports = { tasksSend }

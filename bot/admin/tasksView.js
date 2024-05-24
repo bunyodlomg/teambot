@@ -4,7 +4,7 @@ const tasksView = async (ctx) => {
     const users = await User.find({ admin: false })
     let key = []
 
-    users.forEach((user) => key.push([{ text: `${user.first_name + ' ' + user.last_name}`, callback_data: `${user.id}` }]))
+    users.forEach((user) => key.push([{ text: `${user.first_name + ' ' + user.last_name}`, callback_data: `select_${user.id}` }]))
     key.push([{ text: 'Yuborish ➡️', callback_data: "send" }]);
     ctx.reply(ctx.message.text,
         {
