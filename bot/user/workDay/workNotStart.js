@@ -16,7 +16,7 @@ const workNotStart = async (ctx, user) => {
         if (dateFormat(checkUser.created_date) !== dateFormat()) {
             notStartDate.save()
             admins.forEach(async admin => {
-                await ctx.api.sendMessage(admin.id, `${f_name} ishga kelolmaydi`);
+                await ctx.api.sendMessage(admin.id, `${f_name} ishga kelolmaydi\nSabab: ${ctx.message.text}`);
             });
             await ctx.reply(`Qabul qilindi ✅`, {
                 reply_markup: {
@@ -39,7 +39,7 @@ const workNotStart = async (ctx, user) => {
         }
     } else {
         admins.forEach(async admin => {
-            await ctx.api.sendMessage(admin.id, `${f_name} ishga kelolmaydi`);
+            await ctx.api.sendMessage(admin.id, `${f_name} ishga kelolmaydi\nSabab: ${ctx.message.text}`);
         });
         notStartDate.save()
         await ctx.reply(`Qabul qilindi ✅`, {

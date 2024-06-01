@@ -9,12 +9,14 @@ const reason = async (ctx, id) => {
             await ctx.reply(`To'g'ri tugmani bosing❗`, {
                 reply_markup: {
                     keyboard: kb.home,
+                    resize_keyboard: true
                 }
             })
         } else {
             await ctx.reply(`Iltimos sababini yozing ✍️`, {
                 reply_markup: {
                     keyboard: kb.home,
+                    resize_keyboard: true,
                     input_field_placeholder: 'Iltimos sababini yozing ✍️'
                 }
             })

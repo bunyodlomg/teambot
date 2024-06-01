@@ -17,7 +17,7 @@ const workLate = async (ctx, user) => {
         if (dateFormat(checkUser.created_date) !== dateFormat() && checkUser.end_date === null && checkUser.start_date === null) {
 
             admins.forEach(async admin => {
-                await ctx.api.sendMessage(admin.id, `${f_name} bugun ishga kech qoladi`);
+                await ctx.api.sendMessage(admin.id, `${f_name} bugun ishga kech qoladi\nSabab: ${ctx.message.text}`);
             });
             lateDate.save()
             await ctx.reply(`Qabul qilindi ✅`, {
@@ -34,7 +34,7 @@ const workLate = async (ctx, user) => {
         }
     } else {
         admins.forEach(async admin => {
-            await ctx.api.sendMessage(admin.id, `${f_name} bugun ishga kech qoladi`);
+            await ctx.api.sendMessage(admin.id, `${f_name} bugun ishga kech qoladi\nSabab: ${ctx.message.text}`);
         });
         lateDate.save()
         await ctx.reply(`Qabul qilindi ✅`, {

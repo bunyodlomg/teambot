@@ -17,9 +17,13 @@ module.exports = {
         [btn.today.queue],
         [btn.back]
     ],
-    tasks: [[btn.tasks]],
+    tasks: [
+        [btn.tasks.completed],
+        [btn.tasks.sended_and_accepted],
+        [btn.back]
+    ],
     finance: [
-        [btn.finance.ingoing,btn.finance.outgoing],
+        [btn.finance.ingoing, btn.finance.outgoing],
         [btn.back]
     ],
     nizom: [

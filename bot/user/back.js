@@ -5,7 +5,8 @@ const backUser = async (ctx, user, back) => {
         case '':
             await ctx.reply(`Assalomu alaykum ${user.first_name + '' + user.last_name}! \nQuyidagi bo'limlardan birini tanlang 👇`, {
                 reply_markup: {
-                    keyboard: kb.home
+                    keyboard: kb.home,
+                    resize_keyboard: true
                 }
             })
             break;
@@ -13,7 +14,8 @@ const backUser = async (ctx, user, back) => {
             console.log('today');
             await ctx.reply(`Kerakli bo'limni tanlang 👇`, {
                 reply_markup: {
-                    keyboard: kb.home
+                    keyboard: kb.home,
+                    resize_keyboard: true
                 }
             })
             break;

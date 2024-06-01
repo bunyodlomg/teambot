@@ -38,6 +38,23 @@ const dateYHM = (date) => {
     }
 }
 
+const dateMDH = (date) => {
+    if (date) {
+        return format(new Date(date), "MM-dd HH:mm")
+    } else {
+        return format(new Date(), "MM-dd HH:mm")
+    }
+}
+
+const firstAndLastDateOfMonth = () => {
+    const date = new Date();
+    const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+    const lastDay = new Date(date.getFullYear(), date.getMonth(), 0);
+    console.log(firstDay);
+    console.log(lastDay);
+    return { firstDay, lastDay }
+}
+
 module.exports = {
-    dateFormat, hoursFormat, minutesFormat, dateYHM, dateHM
+    dateFormat, hoursFormat, minutesFormat, dateYHM, dateHM, dateMDH,firstAndLastDateOfMonth
 }

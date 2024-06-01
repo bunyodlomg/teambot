@@ -6,8 +6,8 @@ async function viewFeedback(ctx, skip) {
     const count = await Feedback.countDocuments();
     const totalPages = Math.floor((count - 1) / limit) + 1;
     const tasks = await Feedback.find().sort({ created_date: -1 }).limit(limit).skip(skip);
-    let message = `Taklif / Shikoyat ${skip + 1}/${totalPages}\n\n`;
-    let i = (skip * limit) + 1;
+    let message = `Taklif / Shikoyat ${skip == 0 ? 1 : skip / limit}/${totalPages}\n\n`;
+    let i = skip  + 1;
     tasks.forEach(t => {
         message += `—————————————————\n`
         message += `${i}) ${t.feedback}\n${dateYHM(t.created_date)}\n`;
@@ -20,7 +20,7 @@ async function viewFeedback(ctx, skip) {
             callback_data: "feedback_left_" + skip,
         })
     }
-    if (totalPages > skip + 1) {
+    if (totalPages > (skip / limit)+1) {
         inline.push({
             text: '➡️',
             callback_data: "feedback_right_" + skip,
@@ -31,8 +31,7 @@ async function viewFeedback(ctx, skip) {
             reply_markup: {
                 inline_keyboard: [
                     inline
-                ],
-                resize_keyboard: true
+                ]
             }
         }
     );

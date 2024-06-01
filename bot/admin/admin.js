@@ -1,5 +1,5 @@
-const { Tasks } = require('../../models/model');
-const { dateFormat } = require('../helper/dateFormat');
+const { Tasks, User, Finance } = require('../../models/model');
+const { dateFormat, dateYHM, dateMDH, firstAndLastDateOfMonth } = require('../helper/dateFormat');
 const btn = require('../keyboard/admin_keyboard/buttons');
 const kb = require('../keyboard/admin_keyboard/keyboard');
 const { backAdmin } = require('./back');
@@ -79,13 +79,17 @@ const forAdmin = async (ctx, text, admin) => {
             check_input = {};
             backAdmin(ctx, admin, back)
             break;
+        case "Oylik Hisobotlar":
+            reportOfMonth(ctx);
+            check_input = {};
+            break;
         default:
             console.log(check_input);
             if (check_input !== '{}' && check_input.value == ctx.msgId - 2) {
                 AdminDescription(ctx, check_input)
                 if (check_input.type == 'send') {
                     tasksView(ctx)
-                    const task = new Tasks({ admin_id: ctx.from.id, user_id: 1, task: ctx.message.text, created_date: new Date() });
+                    const task = new Tasks({ admin_id: ctx.from.id, task: ctx.message.text, created_date: new Date() });
                     task.save();
                 }
             }
@@ -93,24 +97,117 @@ const forAdmin = async (ctx, text, admin) => {
     }
 }
 
+
+
+async function reportOfMonth(ctx) {
+    let date = new Date();
+    let firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+    let lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
+    let datas = await Finance.find({ "created_date": { "$gte": firstDay, "$lt": lastDay } })
+    const data = [];
+    if (datas.length == 0) {
+        await ctx.reply("Malumot yo'q");
+    } else {
+        datas.forEach(it => {
+            data.push(it);
+        })
+        // let overallIngoingSumma = 0;
+        // let overallOngoingSumma = 0;
+        // const userMapIn = new Map();
+        // const userMapOn = new Map();
+        // console.log(data);
+        // data.forEach(it => {
+        //     if (it.status == 'INGOING') {
+        //         overallIngoingSumma += it.summa;
+        //         if (userMapIn.has(it.user_id)) {
+        //             let s = userMapIn.get(it.user_id);
+        //             userMapIn.set(it.user_id, s + it.summa)
+        //         } else {
+        //             userMapIn.set(it.user_id, it.summa)
+        //         }
+        //     } else if (it.status == 'OUTGOING') {
+        //         overallOngoingSumma += it.summa;
+        //         if (userMapOn.has(it.user_id)) {
+        //             let s = userMapOn.get(it.user_id);
+        //             userMapOn.set(it.user_id, s + it.summa)
+        //         } else {
+        //             userMapOn.set(it.user_id, it.summa)
+        //         }
+        //     }
+        // })
+
+        // console.log(overallIngoingSumma);
+        // console.log(overallOngoingSumma);
+        // console.log(userMapIn);
+        // console.log(userMapOn);
+
+
+
+
+        // Convert the data to a worksheet
+        const worksheet = xlsx.utils.json_to_sheet(data);
+
+        // Create a new workbook and add the worksheet to it
+        const workbook = {
+            SheetNames: ['Sheet1'],
+            Sheets: {
+                'Sheet1': worksheet
+            }
+        };
+
+        xlsx.writeFile(workbook, 'output.xlsx');
+
+        console.log('Excel file created successfully.');
+    }
+
+}
+
 async function sendData(ctx, limit, skip, isAdmin) {
-    const count = await Tasks.countDocuments(isAdmin ? {} : { user_id: ctx.from.id });
+    const count = await Tasks.countDocuments(isAdmin ? {} : { 'users_id.status': "COMPLETED", 'users_id.user_id': ctx.from.id });
     const totalPages = Math.floor((count - 1) / limit) + 1;
     let tasks = []
-    if (isAdmin) {
-        tasks = await Tasks.find().sort({ created_date: -1 }).limit(limit).skip(skip);
-    } else {
-        tasks = await Tasks.find({ user_id: ctx.from.id }).sort({ created_date: -1 }).limit(limit).skip(skip);
-    }
-    console.log(count, totalPages)
 
-    let message = `Vazifalar ${skip + 1}/${totalPages}\n\n`;
-    let i = (skip * limit) + 1;
-    tasks.forEach(t => {
+    console.log(limit, skip)
+
+    if (isAdmin) {
+        tasks = await Tasks.find({ 'users_id.user_id': { $ne: "1" } }).sort({ created_date: -1 }).limit(limit).skip(skip);
+    } else {
+        tasks = await Tasks.find({ 'users_id.user_id': ctx.from.id, 'users_id.status': "COMPLETED" }).sort({ created_date: -1 }).limit(limit).skip(skip);
+    }
+
+    let message = `Vazifalar ${skip == 0 ? 1 : skip / limit}/${totalPages}\n\n`;
+    let i = skip + 1;
+
+    function formatt(params) {
+        if (params.status === "SENDED") return `Yuborildi : ${dateMDH(params.sended)}`;
+        if (params.status === "ACCEPTED") return `Qabul qilindi : ${dateMDH(params.accepted)}`;
+        if (params.status === "COMPLETED") return `Yakunlandi : ${dateMDH(params.completed)}`;
+    }
+
+    // let inline2 = [];
+    for (let j = 0; j < tasks.length; j++) {
+        const value = tasks[j];
+
+        // inline2.push({
+        // text: i.toString(),
+        // callback_data: "task_find_"+value._id
+        // })
+
         message += `—————————————————\n`
-        message += `${i})\n<i>${t.task}</i>\n${dateFormat(t.created_date) + ' ' + getHours(t.created_date) + ':' + getMinutes(t.created_date)}\n`;
+        message += `${i})\n${value.task}\n${dateYHM(value.created_date)}\n\n`;
+
+        for (let i = 0; i < value.users_id.length; i++) {
+            const user = await User.findOne({ id: value.users_id[i].user_id });
+            message += `<b>${user.first_name + ' ' + user.last_name}</b> :\n<i>${formatt(value.users_id[i])}</i>\n`;
+        }
         i++;
-    })
+    }
+    // tasks.forEach(t => {
+    //     message += `—————————————————\n`
+    //     message += `${i})\n<i>${t.task}</i>\n${dateFormat(t.created_date) + ' ' + getHours(t.created_date) + ':' + getMinutes(t.created_date)}\n${t.user_id}`;
+    //     i++;
+    // })
     let inline = [];
     if (skip != 0) {
         inline.push({
@@ -118,19 +215,19 @@ async function sendData(ctx, limit, skip, isAdmin) {
             callback_data: "left_" + skip,
         })
     }
-    if (totalPages > skip + 1) {
+    if (totalPages > (skip / limit) + 1) {
         inline.push({
             text: '➡️',
             callback_data: "right_" + skip,
         })
     }
+
     await ctx.api.sendMessage(ctx.from.id, message,
         {
             reply_markup: {
                 inline_keyboard: [
-                    inline
-                ],
-                resize_keyboard: true
+                    inline,
+                ]
             },
             parse_mode: 'HTML'
         }

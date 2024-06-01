@@ -1,4 +1,4 @@
-const { Finance } = require('../../models/model');
+const { Finance, Tasks } = require('../../models/model');
 const btn = require("../keyboard/user_keyboard/buttons");
 const kb = require('../keyboard/user_keyboard/keyboard');
 const { workStart } = require("./workDay/workStart");
@@ -8,6 +8,7 @@ const { workDescription } = require("./workDescription");
 const { reason } = require("./reason");
 const { usersQueue } = require("./workDay/usersQueue");
 const { sendData } = require('../admin/admin');
+const { dateYHM } = require('../helper/dateFormat');
 // const { test } = require("./workDay/TEST.JS");
 
 let back = '',
@@ -84,10 +85,21 @@ const forUser = async (ctx, text, user) => {
         // FEEDBACK END
 
         case btn.home.tasks:
-            sendData(ctx, 5, 0, false);
+            check_input = {};
+            await ctx.reply(`Kerakli bo'limni tanlang 👇`, {
+                reply_markup: {
+                    keyboard: kb.tasks,
+                    resize_keyboard: true
+                }
+            })
             back = ''
             break;
-
+        case btn.tasks.completed:
+            sendData(ctx, 5, 0, false);
+            break;
+        case btn.tasks.sended_and_accepted:
+            sendedAndAcceptedData(ctx);
+            break;
         case btn.home.finance:
             ctx.reply("Kerakli bo'limni tanlang 👇", {
                 reply_markup: {
@@ -165,6 +177,23 @@ const forUser = async (ctx, text, user) => {
             break;
     }
 
+}
+
+async function sendedAndAcceptedData(ctx) {
+    const data = await Tasks.find({ 'users_id.user_id': ctx.from.id, 'users_id.status': { $ne: "COMPLETED" } });
+    if (data.length) {
+        for (const task of data) {
+            await ctx.reply(task.task + "\n" + (task.users_id[0].status) + "\n" + dateYHM(task.created_date), {
+                reply_markup: {
+                    inline_keyboard: [[
+                        task.users_id[0].status === "ACCEPTED" ? { text: "Tugatish", callback_data: "complete_task_" + task.users_id[0].user_id + "_" + task._id } : { text: "Qabul qilish", callback_data: "accept_task_" + task.users_id[0].user_id + "_" + task._id }
+                    ]]
+                }
+            })
+        }
+    } else {
+        await ctx.reply(`Vazifalar 1/0`)
+    }
 }
 
 module.exports = { forUser }

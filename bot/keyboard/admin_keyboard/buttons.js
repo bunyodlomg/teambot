@@ -4,6 +4,7 @@ module.exports = {
         tasks: 'Vazifalar 📝',
         add_delete_user: 'Ishchilarni tahrirlash ➕/➖',
         finance: 'Sarf harajatlar 📈',
+        report: 'Oylik Hisobotlar',
         feedback: 'Taklif💡/ Shikoyat📣',
     },
     tasks: {

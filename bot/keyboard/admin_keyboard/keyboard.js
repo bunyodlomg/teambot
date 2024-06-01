@@ -5,6 +5,7 @@ module.exports = {
         [btn.home.workers],
         [btn.home.tasks, btn.home.finance],
         [btn.home.add_delete_user],
+        [btn.home.report],
         [btn.home.feedback],
     ],
     tasks: [

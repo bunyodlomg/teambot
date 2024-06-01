@@ -17,6 +17,10 @@ module.exports = {
         ingoing: 'Kirim +',
         outgoing: 'Chiqim -'
     },
+    tasks: {
+        completed: 'Yakunlanganlar',
+        sended_and_accepted: 'Jarayondagilar va Yuborilganlar',
+    },
     back: 'Ortga qaytish 🔙'
 
 }

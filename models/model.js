@@ -39,11 +39,21 @@ const feedbackSchema = new Schema({
     feedback: { type: String, required: true },
     created_date: { type: Date, required: true }
 });
+
+const usersSchema = new Schema({
+    user_id: String,
+    status: String,
+    sended: Date,
+    accepted: Date
+}, { _id: false });
+
 const tasksSchema = new Schema({
     admin_id: { type: Number },
-    user_id: { type: Number, required: true },
+    users_id: [usersSchema],
     task: { type: String, required: true },
-    created_date: { type: Date, required: true },
+    created_date: { type: Date, required: true }
+    // task_id: { type: String, required: true},
+    // status: { type: String, required: true}
 });
 
 const User = model('User', userSchema);
