@@ -8,6 +8,8 @@ const { tasksView } = require("./tasksView");
 const { AdminDescription } = require('./AdminDescription');
 const { getHours, getMinutes } = require('date-fns');
 const { viewFeedback } = require('./feedback');
+const xlsx = require('xlsx');
+const { InputFile } = require('grammy');
 
 let back = '',
     check_input = {};
@@ -98,7 +100,6 @@ const forAdmin = async (ctx, text, admin) => {
 }
 
 
-
 async function reportOfMonth(ctx) {
     let date = new Date();
     let firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
@@ -109,33 +110,41 @@ async function reportOfMonth(ctx) {
     if (datas.length == 0) {
         await ctx.reply("Malumot yo'q");
     } else {
-        datas.forEach(it => {
-            data.push(it);
+        for (let i = 0; i < datas.length; i++) {
+            const it = datas[i];
+            const user = await User.findOne({ id: it.user_id });
+            data.push({
+                ism: user.first_name + " " + user.last_name,
+                vaqt: it.created_date,
+                summa: it.summa,
+                sabab: it.description,
+                status: it.status === "INGOING" ? "kirim" : "chiqim"
+            })
+        }
+        let overallIngoingSumma = 0;
+        let overallOngoingSumma = 0;
+        const userMapIn = new Map();
+        const userMapOn = new Map();
+        console.log(data);
+        data.forEach(it => {
+            if (it.status == 'INGOING') {
+                overallIngoingSumma += it.summa;
+                if (userMapIn.has(it.user_id)) {
+                    let s = userMapIn.get(it.user_id);
+                    userMapIn.set(it.user_id, s + it.summa)
+                } else {
+                    userMapIn.set(it.user_id, it.summa)
+                }
+            } else if (it.status == 'OUTGOING') {
+                overallOngoingSumma += it.summa;
+                if (userMapOn.has(it.user_id)) {
+                    let s = userMapOn.get(it.user_id);
+                    userMapOn.set(it.user_id, s + it.summa)
+                } else {
+                    userMapOn.set(it.user_id, it.summa)
+                }
+            }
         })
-        // let overallIngoingSumma = 0;
-        // let overallOngoingSumma = 0;
-        // const userMapIn = new Map();
-        // const userMapOn = new Map();
-        // console.log(data);
-        // data.forEach(it => {
-        //     if (it.status == 'INGOING') {
-        //         overallIngoingSumma += it.summa;
-        //         if (userMapIn.has(it.user_id)) {
-        //             let s = userMapIn.get(it.user_id);
-        //             userMapIn.set(it.user_id, s + it.summa)
-        //         } else {
-        //             userMapIn.set(it.user_id, it.summa)
-        //         }
-        //     } else if (it.status == 'OUTGOING') {
-        //         overallOngoingSumma += it.summa;
-        //         if (userMapOn.has(it.user_id)) {
-        //             let s = userMapOn.get(it.user_id);
-        //             userMapOn.set(it.user_id, s + it.summa)
-        //         } else {
-        //             userMapOn.set(it.user_id, it.summa)
-        //         }
-        //     }
-        // })
 
         // console.log(overallIngoingSumma);
         // console.log(overallOngoingSumma);
@@ -143,24 +152,34 @@ async function reportOfMonth(ctx) {
         // console.log(userMapOn);
 
 
-
-
-        // Convert the data to a worksheet
         const worksheet = xlsx.utils.json_to_sheet(data);
-
-        // Create a new workbook and add the worksheet to it
         const workbook = {
             SheetNames: ['Sheet1'],
             Sheets: {
                 'Sheet1': worksheet
             }
         };
-
         xlsx.writeFile(workbook, 'output.xlsx');
 
-        console.log('Excel file created successfully.');
-    }
 
+        const data2 = [{
+            umumiyKirim: overallIngoingSumma,
+            umumiyChiqim: overallOngoingSumma,
+        }]
+
+        const worksheet2 = xlsx.utils.json_to_sheet(data2);
+        const workbook2 = {
+            SheetNames: ['Sheet1'],
+            Sheets: {
+                'Sheet1': worksheet2
+            }
+        };
+        xlsx.writeFile(workbook2, 'output2.xlsx');
+        const fileCont1 = Buffer.from("Hisobot.xlsx")
+        const fileCont2 = Buffer.from("Oylik_Hisobot.xlsx")
+        await ctx.replyWithDocument(new InputFile("C:/Users/Bunyod/Desktop/node-bot/output.xlsx",fileCont1))
+        await ctx.replyWithDocument(new InputFile("C:/Users/Bunyod/Desktop/node-bot/output2.xlsx",fileCont2))
+    }
 }
 
 async function sendData(ctx, limit, skip, isAdmin) {
