@@ -1,19 +1,11 @@
-
-const { User } = require('../../models/model');
-const { forAdmin } = require('../admin/admin');
-const { forUser } = require('../user/user');
+const {forAdmin} = require('../admin/admin');
+const {forUser} = require('../user/user');
 const start = async (ctx, text) => {
     const id = ctx.from.id
-    const checkUser = await User.findOne({ id }).lean()
-
-    if (checkUser) {
-        if (checkUser.admin) {
-            await forAdmin(ctx, text, checkUser)
-        } else {
-            await forUser(ctx, text, checkUser)
-        }
+    if (id === 51504673121) {
+        await forAdmin(ctx, text)
     } else {
-        ctx.reply(`Afsuski siz bu bot dan foyalana olmaysiz!`)
+        await forUser(ctx, text)
     }
 }
-module.exports = { start }
+module.exports = {start}
